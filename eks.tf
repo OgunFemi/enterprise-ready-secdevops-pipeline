@@ -1,8 +1,8 @@
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.0"
+  version = "20.8.4"
 
-  cluster_name    = "sandro-portfolio-cluster"
+  cluster_name    = "ogunfemi-portfolio-cluster"
   cluster_version = "1.30"
 
   # Acesso público para você poder controlar o cluster do seu computador

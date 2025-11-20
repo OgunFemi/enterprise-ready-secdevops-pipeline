@@ -20,18 +20,42 @@ The result is a system that allows engineers to deploy code rapidly, while simul
 ## Architecture
 ### High-Level Architecture Flow
 
-`[Developer]` -> `(git push)` -> `[GitHub Repo]`
-      |
-      v
-`[GitHub Actions CI Pipeline]`
-  |-- 1. Checkout Code
-  |-- 2. Terraform Init/Plan (IaC)
-  |-- 3. Build Docker Image
-  |-- 4. Security Scans (Trivy/SonarQube) <--- **SECURITY GATE**
-  |-- 5. Push to AWS ECR
-      |
-      v
-`[AWS EKS Cluster]` (Automated Deployment)
+graph LR
+    %% Definição dos Nós (Atores e Sistemas)
+    Dev([👷 Developer])
+    GitHub[🐙 GitHub Repo]
+    
+    %% O Pipeline de CI/CD (A Caixa Principal)
+    subgraph CI_CD_Pipeline ["⚙️ GitHub Actions Pipeline"]
+        direction LR
+        TF[Terraform Init/Plan]
+        Build[Docker Build]
+        SecGate{🛡️ Security Gate<br/>Trivy & SonarQube}
+    end
+    
+    %% Os Destinos (AWS)
+    ECR[("📦 AWS ECR<br/>(Registry)")]
+    EKS[("⬡ AWS EKS<br/>(Cluster)")]
+
+    %% O Fluxo (As Setas)
+    Dev -- "git push" --> GitHub
+    GitHub -- "Trigger" --> TF
+    TF --> Build
+    Build --> SecGate
+    
+    %% Decisão de Segurança
+    SecGate -- "❌ Fail (Vulnerabilities)" --> Stop((🚫 Block Deploy))
+    SecGate -- "✅ Pass (Clean)" --> ECR
+    
+    %% Deploy Final
+    ECR -- "Deploy Image" --> EKS
+
+    %% Estilização (Para ficar bonito/Enterprise)
+    style SecGate fill:#ffcc00,stroke:#333,stroke-width:2px
+    style ECR fill:#ff9900,stroke:#333,color:white
+    style EKS fill:#ff9900,stroke:#333,color:white
+    style CI_CD_Pipeline fill:#f9f9f9,stroke:#333,stroke-dasharray: 5 5
+    style Stop fill:#ffcccc,stroke:#cc0000
 
 
 
