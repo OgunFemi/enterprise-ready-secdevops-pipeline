@@ -20,8 +20,10 @@ The result is a system that allows engineers to deploy code rapidly, while simul
 ## Architecture
 ### High-Level Architecture Flow
 
- 
- graph LR
+### High-Level Architecture Flow
+
+```mermaid
+graph LR
     %% Definição dos Nós (Atores e Sistemas)
     Dev([👷 Developer])
     GitHub[🐙 GitHub Repo]
@@ -57,7 +59,6 @@ The result is a system that allows engineers to deploy code rapidly, while simul
     style EKS fill:#ff9900,stroke:#333,color:white
     style CI_CD_Pipeline fill:#f9f9f9,stroke:#333,stroke-dasharray: 5 5
     style Stop fill:#ffcccc,stroke:#cc0000
-
 
 ## Compliance & Risk Alignment
 
