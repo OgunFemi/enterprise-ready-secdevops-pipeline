@@ -17,13 +17,23 @@ The result is a system that allows engineers to deploy code rapidly, while simul
 * **CI/CD:** GitHub Actions
 * **Security:** Trivy, SonarQube
 
+## Compliance & Risk Alignment
+
+This blueprint is designed to satisfy critical controls for **SOC 2 Type II** and **ISO 27001** audits. The table below maps technical implementation to business compliance requirements.
+
+| Module / Tool | Technical Action | SOC 2 Control (CC) | ISO 27001 Control (Annex A) | Business Value (The "Why") |
+| :--- | :--- | :--- | :--- | :--- |
+| **Module 1 (Terraform)** | Infrastructure as Code (IaC) | **CC8.1** (Change Management) | **A.12.1.2** (Change Management) | Eliminates "manual configuration drift." All infra changes are reviewed via Pull Requests, creating a permanent audit trail. |
+| **Module 1 (AWS IAM)** | Least Privilege Policies | **CC6.1** (Logical Access) | **A.9.2.3** (Access Rights Management) | Ensures that automation tools (and humans) only have the exact permissions needed to perform their role, reducing blast radius. |
+| **Module 2 (Docker)** | Non-root User Containers | **CC6.6** (Boundary Protection) | **A.14.2.1** (Secure Development Policy) | Prevents container breakouts. If an attacker compromises the app, they cannot gain control of the underlying host node. |
+| **Module 4 (Trivy)** | Automated SCA Scanning | **CC7.1** (System Operations - Vulnerabilities) | **A.12.6.1** (Technical Vulnerability Mgmt) | Automatically blocks the deployment of software with known CVEs (High/Critical), preventing supply chain attacks. |
+| **Module 3 (GitHub Actions)** | Automated Pipeline | **CC8.1** (Prevent Unauthorized Changes) | **A.14.2.2** (Change Control Procedures) | Removes human error and malice from the deployment process. No developer has direct access to production; only the pipeline does. |
+
 ## Architecture
 ### High-Level Architecture Flow
 
-### High-Level Architecture Flow
-
-```mermaid
-graph LR
+ ```mermaid
+ graph LR
     %% Definição dos Nós (Atores e Sistemas)
     Dev([👷 Developer])
     GitHub[🐙 GitHub Repo]
@@ -59,15 +69,3 @@ graph LR
     style EKS fill:#ff9900,stroke:#333,color:white
     style CI_CD_Pipeline fill:#f9f9f9,stroke:#333,stroke-dasharray: 5 5
     style Stop fill:#ffcccc,stroke:#cc0000
-
-## Compliance & Risk Alignment
-
-This blueprint is designed to satisfy critical controls for **SOC 2 Type II** and **ISO 27001** audits. The table below maps technical implementation to business compliance requirements.
-
-| Module / Tool | Technical Action | SOC 2 Control (CC) | ISO 27001 Control (Annex A) | Business Value (The "Why") |
-| :--- | :--- | :--- | :--- | :--- |
-| **Module 1 (Terraform)** | Infrastructure as Code (IaC) | **CC8.1** (Change Management) | **A.12.1.2** (Change Management) | Eliminates "manual configuration drift." All infra changes are reviewed via Pull Requests, creating a permanent audit trail. |
-| **Module 1 (AWS IAM)** | Least Privilege Policies | **CC6.1** (Logical Access) | **A.9.2.3** (Access Rights Management) | Ensures that automation tools (and humans) only have the exact permissions needed to perform their role, reducing blast radius. |
-| **Module 2 (Docker)** | Non-root User Containers | **CC6.6** (Boundary Protection) | **A.14.2.1** (Secure Development Policy) | Prevents container breakouts. If an attacker compromises the app, they cannot gain control of the underlying host node. |
-| **Module 4 (Trivy)** | Automated SCA Scanning | **CC7.1** (System Operations - Vulnerabilities) | **A.12.6.1** (Technical Vulnerability Mgmt) | Automatically blocks the deployment of software with known CVEs (High/Critical), preventing supply chain attacks. |
-| **Module 3 (GitHub Actions)** | Automated Pipeline | **CC8.1** (Prevent Unauthorized Changes) | **A.14.2.2** (Change Control Procedures) | Removes human error and malice from the deployment process. No developer has direct access to production; only the pipeline does. |
