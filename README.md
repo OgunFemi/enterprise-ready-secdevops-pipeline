@@ -20,6 +20,8 @@ The result is a system that allows engineers to deploy code rapidly, while simul
 ## Architecture
 ### High-Level Architecture Flow
 
+```markdown
+```mermaid
 graph LR
     %% Definição dos Nós (Atores e Sistemas)
     Dev([👷 Developer])
