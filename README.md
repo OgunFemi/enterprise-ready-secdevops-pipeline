@@ -29,6 +29,28 @@ This blueprint is designed to satisfy critical controls for **SOC 2 Type II** an
 | **Module 4 (Trivy)** | Automated SCA Scanning | **CC7.1** (System Operations - Vulnerabilities) | **A.12.6.1** (Technical Vulnerability Mgmt) | Automatically blocks the deployment of software with known CVEs (High/Critical), preventing supply chain attacks. |
 | **Module 3 (GitHub Actions)** | Automated Pipeline | **CC8.1** (Prevent Unauthorized Changes) | **A.14.2.2** (Change Control Procedures) | Removes human error and malice from the deployment process. No developer has direct access to production; only the pipeline does. |
 
+## 🛡️ Security Architecture & CISSP Alignment
+
+This project implements core cybersecurity principles derived from the **CISSP Common Body of Knowledge (CBK)** to ensure a secure-by-design infrastructure.
+
+### 1. Defense in Depth (Layered Security)
+* **Network Layer:** Resources are isolated within a VPC. EKS Nodes reside in **Private Subnets** (no direct internet access), protected by NAT Gateways.
+* **Perimeter Layer:** **Security Groups** act as stateful firewalls, strictly whitelisting ingress/egress traffic (e.g., allowing HTTPS only).
+* **Identity Layer:** Access is governed by AWS IAM, requiring explicit authentication and authorization via short-lived tokens (STS).
+
+### 2. Principle of Least Privilege (PoLP)
+* **IAM Roles:** We do not use Access Keys for compute resources. Instead, EKS Nodes assume specific IAM Roles with minimal permissions required to pull images from ECR, following the concept of "Need-to-Know."
+* **Non-Root Containers:** (Planned) Docker images are built to run as non-root users to mitigate potential container breakout attacks.
+
+### 3. Infrastructure as Code (Configuration Management)
+* **Immutable Infrastructure:** By using **Terraform**, we treat infrastructure as volatile. We avoid manual changes ("ClickOps"), ensuring that the deployed state always matches the code repository. This satisfies strict **Change Management** controls (SOC 2 CC8.1).
+
+### 4. Confidentiality, Integrity, Availability (CIA Triad)
+* **Confidentiality:** All sensitive data (Secrets) are encrypted at rest using AWS KMS (Key Management Service).
+* **Integrity:** The CI/CD pipeline ensures that the code deployed is exactly the code committed, verified by checksums and version control.
+* **Availability:** The EKS cluster utilizes Auto Scaling Groups across multiple Availability Zones (AZs) to ensure resilience against data center failures.
+
+
 ## Architecture
 ### High-Level Architecture Flow
 
@@ -69,25 +91,3 @@ This blueprint is designed to satisfy critical controls for **SOC 2 Type II** an
     style EKS fill:#ff9900,stroke:#333,color:white
     style CI_CD_Pipeline fill:#f9f9f9,stroke:#333,stroke-dasharray: 5 5
     style Stop fill:#ffcccc,stroke:#cc0000
-
-
-## 🛡️ Security Architecture & CISSP Alignment
-
-This project implements core cybersecurity principles derived from the **CISSP Common Body of Knowledge (CBK)** to ensure a secure-by-design infrastructure.
-
-### 1. Defense in Depth (Layered Security)
-* **Network Layer:** Resources are isolated within a VPC. EKS Nodes reside in **Private Subnets** (no direct internet access), protected by NAT Gateways.
-* **Perimeter Layer:** **Security Groups** act as stateful firewalls, strictly whitelisting ingress/egress traffic (e.g., allowing HTTPS only).
-* **Identity Layer:** Access is governed by AWS IAM, requiring explicit authentication and authorization via short-lived tokens (STS).
-
-### 2. Principle of Least Privilege (PoLP)
-* **IAM Roles:** We do not use Access Keys for compute resources. Instead, EKS Nodes assume specific IAM Roles with minimal permissions required to pull images from ECR, following the concept of "Need-to-Know."
-* **Non-Root Containers:** (Planned) Docker images are built to run as non-root users to mitigate potential container breakout attacks.
-
-### 3. Infrastructure as Code (Configuration Management)
-* **Immutable Infrastructure:** By using **Terraform**, we treat infrastructure as volatile. We avoid manual changes ("ClickOps"), ensuring that the deployed state always matches the code repository. This satisfies strict **Change Management** controls (SOC 2 CC8.1).
-
-### 4. Confidentiality, Integrity, Availability (CIA Triad)
-* **Confidentiality:** All sensitive data (Secrets) are encrypted at rest using AWS KMS (Key Management Service).
-* **Integrity:** The CI/CD pipeline ensures that the code deployed is exactly the code committed, verified by checksums and version control.
-* **Availability:** The EKS cluster utilizes Auto Scaling Groups across multiple Availability Zones (AZs) to ensure resilience against data center failures.
